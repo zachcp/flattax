@@ -11,13 +11,24 @@ library(taxizedb)
 #'
 #' @param high_level_taxid. Required. Integer.
 #' @importFrom taxizedb downstream
+#' @importFrom taxizedb src_ncbi
 #' @export
 #' @example
 #' \dontrun{
-#' bacteria <- get_species_ids(2)
+#' species_ids <- get_species_ids()
 #' }
-get_species_ids <- function(high_level_taxid) {
-  downstream(high_level_taxid, db='ncbi', downto='species')[[1]]$childtaxa_id
+get_species_ids <- function() {
+  db <- src_ncbi()
+  nodes <- tbl(db, "nodes")
+
+  nodes %>%
+    filter(rank %in% c("species", "strain")) %>%
+    select(tax_id) %>%
+    as.data.frame() %>%
+    .$tax_id
+
+
+  #downstream(high_level_taxid, db='ncbi', downto='species')[[1]]$childtaxa_id
 }
 
 #' create_flat_tax_table
@@ -63,11 +74,11 @@ create_flat_tax_table <- function(
 #' write_taxonomy_flatfile(2, "~/Downloads/temp_tax1.txt")
 #' }
 write_taxonomy_flatfile <- function(taxid, outfile, ncpus=1, ...) {
-  tmp <- tempfile();
+  tmp <- tempfile()
   print(tmp)
   on.exit(unlink(tmp))
 
-  ids     <- get_species_ids(taxid)
+  ids     <- get_species_ids()
 
   parallel::mclapply(
     ids,
@@ -110,6 +121,10 @@ write_taxonomy_flatfile <- function(taxid, outfile, ncpus=1, ...) {
 #' }
 #'
 
+
+# download the ncbi_taxonomy_database
+taxizedb::db_download_ncbi()
+
 write_taxonomy_flatfile(
   taxid = 1,
   outfile = "data-raw/flattax.txt",
@@ -122,5 +137,7 @@ flattax <- data.table::fread(
               'phylum','species', 'superkingdom', 'taxid'))
 
 
+# Species Plus Strains: 1941033
 usethis::use_data(flattax, overwrite = TRUE)
+
 
