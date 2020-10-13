@@ -1,6 +1,6 @@
 Package: flattax
 Title: NCBI Flat Taxonomy File
-Version: 0.0.0.9000
+Version: 0.0.1
 Authors@R: 
     person(given = "Zachary",
            family = "Charlop-Powers",
@@ -14,6 +14,6 @@ Encoding: UTF-8
 LazyData: true
 Imports: taxizedb
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Depends: 
     R (>= 2.10)

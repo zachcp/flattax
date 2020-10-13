@@ -5,9 +5,9 @@
 <!-- badges: end -->
 
 The goal of `flattax` is to provide a simplified view on NCBI's
-taxonomic heirarchy. It provides the following datasets:
+taxonomic hierarchy. It provides the following datasets:
 
- - `flattax`:  A nine-column dataframe of taxonomic levels and the NCBI taxid. Calculated for all specied-level taxids as of 20200710
+ - `flattax`:  A data.table of NCBI's `new_taxdump/rankedlineage.dmp` file.
 
 ## Installatation
 
@@ -23,27 +23,28 @@ devtools::install_github("zachcp/flattax")
 ```
 > library(flattax)
 > flattax
-                       class            family          genus kingdom            order
-      1: Alphaproteobacteria Xanthobacteraceae   Azorhizobium Unknown      Rhizobiales
-      2: Gammaproteobacteria       Erwiniaceae       Buchnera Unknown Enterobacterales
-      3:      Actinobacteria Cellulomonadaceae   Cellulomonas Unknown    Micrococcales
-      4:        Dictyoglomia   Dictyoglomaceae   Dictyoglomus Unknown   Dictyoglomales
-      5:  Betaproteobacteria  Methylophilaceae  Methylophilus Unknown Nitrosomonadales
-     ---                                                                              
-1827688:      Actinobacteria Streptomycetaceae   Streptomyces Unknown Streptomycetales
-1827689:      Flavobacteriia Flavobacteriaceae Flavobacterium Unknown Flavobacteriales
-1827690:  Betaproteobacteria  Burkholderiaceae    Limnobacter Unknown  Burkholderiales
-1827691:      Eurotiomycetes    Trichocomaceae    Talaromyces   Fungi       Eurotiales
-1827692:      Agaricomycetes    Cortinariaceae    Cortinarius   Fungi       Agaricales
-                 phylum                      species superkingdom   taxid
-      1: Proteobacteria     Azorhizobium caulinodans     Bacteria       7
-      2: Proteobacteria          Buchnera aphidicola     Bacteria       9
-      3: Actinobacteria          Cellulomonas gilvus     Bacteria      11
-      4:    Dictyoglomi    Dictyoglomus thermophilum     Bacteria      14
-      5: Proteobacteria Methylophilus methylotrophus     Bacteria      17
-     ---                                                                 
-1827688: Actinobacteria    Streptomyces sp. S3(2020)     Bacteria 2732044
-1827689:  Bacteroidetes Flavobacterium sp. IMCC34852     Bacteria 2732161
-1827690: Proteobacteria   Limnobacter sp. SAORIC-580     Bacteria 2732163
-1827691:     Ascomycota       Talaromyces fusiformis    Eukaryota 2732352
-1827692:  Basidiomycota Cortinarius violaceovolvatus    Eukaryota 2732395```
+          tax_id                     tax_name species genus family order class phylum kingdom
+      1:       1                         root                                                
+      2:  131567           cellular organisms                                                
+      3:    2157                      Archaea                                                
+      4: 1935183                 Asgard group                                                
+      5: 1936272 Candidatus Heimdallarchaeota                                                
+     ---                                                                                     
+2281047:    2413               Transposon Tn7                                                
+2281048:    2417               Transposon Tn9                                                
+2281049:    2414             Transposon Tn903                                                
+2281050:    2415             Transposon Tn916                                                
+2281051:    2416             Transposon Tn917                                                
+         superkingdom
+      1:             
+      2:             
+      3:             
+      4:      Archaea
+      5:      Archaea
+     ---             
+2281047:             
+2281048:             
+2281049:             
+2281050:             
+2281051:   
+```
