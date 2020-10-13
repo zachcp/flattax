@@ -1,9 +1,9 @@
 ## code to prepare `DATASET` dataset goes here
 
-library(dplyr)
-library(tidyr)
+#library(dplyr)
+#library(tidyr)
 library(data.table)
-library(taxizedb)
+#library(taxizedb)
 
 #' get_species_ids
 #'
@@ -78,11 +78,14 @@ write_taxonomy_flatfile <- function(taxid, outfile, ncpus=1, ...) {
   print(tmp)
   on.exit(unlink(tmp))
 
+  print('Retrieving IDs')
   ids     <- get_species_ids()
+  print('Creating All Taxids')
 
   parallel::mclapply(
     ids,
     function(id) {
+      #print(id)
       df <- create_flat_tax_table(id)
       write.table(df,
                   file = tmp,
@@ -123,21 +126,57 @@ write_taxonomy_flatfile <- function(taxid, outfile, ncpus=1, ...) {
 
 
 # download the ncbi_taxonomy_database
-taxizedb::db_download_ncbi()
+# taxizedb::db_download_ncbi()
+#
+# write_taxonomy_flatfile(
+#   taxid = 1,
+#   outfile = "data-raw/flattax.txt",
+#   npcus = 1)
+#
+#
+# flattax <- data.table::fread(
+#   "data-raw/flattax.txt",
+#   col.names=c('class',  'family', 'genus', 'kingdom', 'order',
+#               'phylum','species', 'superkingdom', 'taxid'))
 
-write_taxonomy_flatfile(
-  taxid = 1,
-  outfile = "data-raw/flattax.txt",
-  npcus = 1)
+
+
+tdir    <- tempdir()
+taxfile <- paste0(tdir, "/new_taxdump.zip")
+
+download.file(
+  "ftp://ftp.ncbi.nlm.nih.gov/pub/taxonomy/new_taxdump/new_taxdump.zip",
+  taxfile
+)
+
+unzip(taxfile, tdir)
+
+rankedtaxfile <- paste0(tdir, "/rankedlineage.dmp")
+
+if (!file.exists(rankedtaxfile)) {
+  stop("Error uncompressing Taxfile from NCBI.")
+}
+
 
 
 flattax <- data.table::fread(
-  "data-raw/flattax.txt",
-  col.names=c('class',  'family', 'genus', 'kingdom', 'order',
-              'phylum','species', 'superkingdom', 'taxid'))
+  sep = "",
+  header = FALSE,
+  rankedtaxfile
+)
+
+
+flattax[,
+        c("tax_id", "tax_name", "species", "genus", "family", "order", "class", "phylum", "kingdom", "superkingdom")
+        := tstrsplit(V1, "\t|\t", fixed=T)][
+    , V1 := NULL][
+    , superkingdom := tstrsplit(superkingdom, "\t", keep=1)]
+
 
 
 # Species Plus Strains: 1941033
 usethis::use_data(flattax, overwrite = TRUE)
+
+
 
 
